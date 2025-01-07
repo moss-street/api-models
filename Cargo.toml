@@ -4,14 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.95"
 prost = "0.13.4"
-tokio = "1.42.0"
+tokio = {version = "1.42.0", features = ['full']}
 tonic = "0.12.3"
 tonic-reflection = "0.12.3"
 tonic-web = "0.12.3"
 tower-http = "0.6.2"
 
-[build-dependency]
+[build-dependencies]
 tonic-build = "0.12.3"
-
+anyhow = "1.0.95"
