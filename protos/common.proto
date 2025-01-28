@@ -11,7 +11,7 @@ message Token {
 }
 
 message User {
-  uint64 uuid = 1;
+  int32 uuid = 1;
   string username = 2;
   Token token = 3;
   google.protobuf.Timestamp creation_date = 4;
