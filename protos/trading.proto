@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package trading;
+
+import "google/protobuf/timestamp.proto";
+
+service TradeService {
+  rpc CreateTrade(CreateTradeRequest) returns (CreateTradeResponse);
+  rpc GetTrade(GetTradeRequest) returns (GetTradeResponse);
+  rpc DeleteTrade(DeleteTradeRequest) returns (DeleteTradeResponse);
+}
+
+message TradeId {
+  int32 trade_id = 1;
+}
+
+// A request object used to place a trade, this object is stored and played
+// back to the user in the GetTradeRequest
+message TradeRequest {
+  // TradeType specifies the type of trade order.
+  enum TradeType {
+    TRADE_TYPE_UNSPECIFIED = 0;
+    // A market order executes immediately at the best available price.
+    TRADE_TYPE_MARKET = 1;
+    // A limit order sets a specific price at which the trade should be executed.
+    TRADE_TYPE_LIMIT = 2;
+  }
+
+  // TransactionType defines whether the trade is a buy or sell order.
+  enum TransactionType {
+    TRANSACTION_TYPE_UNSPECIFIED = 0;
+    // Indicates a buy order.
+    TRANSACTION_TYPE_BUY = 1;
+    // Indicates a sell order.
+    TRANSACTION_TYPE_SELL = 2;
+  }
+
+  // The type of trade order (market or limit).
+  TradeType trade_type = 1;
+
+  // The transaction type (buy or sell).
+  TransactionType transaction_type = 2;
+
+  // The source currency you have and want to trade for dest
+  string symbol_source = 3;
+
+  // The dest currency you want to get for your source
+  string symbol_dest = 4;
+
+  // The quantity of the asset to be traded.
+  double source_quantity = 5;
+
+  // The price at which the order should be executed
+  // Only applicable for limit orders.
+  optional double price = 6;
+
+  // Time at which limit order is valid from. The trade will be pending until this time.
+  // Only applicable for limit orders
+  // Will default to now if not set
+  optional google.protobuf.Timestamp valid_from = 7;
+
+  // Time at which limit order is valid to. The trade will be canceled after this time.
+  // Only applicable for limit orders
+  // This will become a limit order that never expires if not set
+  optional google.protobuf.Timestamp valid_to = 8;
+}
+
+// CreateTradeRequest represents a request to create a new trade.
+message CreateTradeRequest {
+  TradeRequest trade_request = 1;
+}
+
+message CreateTradeResponse {
+  enum CreateTradeStatus {
+    CREATE_TRADE_STATUS_UNSPECIFIED = 0;
+
+    // Trade was created successfully
+    CREATE_TRADE_STATUS_OK = 1;
+
+    // Trade not created due to insufficient funds in source wallet
+    CREATE_TRADE_STATUS_INSUFFICIENT_FUNDS = 2;
+
+    // Trade not created due to an server error
+    CREATE_TRADE_STATUS_INTERNAL_ERROR = 3;
+
+    // No price was specified in the limit order
+    CREATE_TRADE_STATUS_MISSING_LIMIT_PRICE = 4;
+
+    // Invalid dates were passed in a liit order
+    // Either a valid_to dates in the past will cancel immediately and
+    // valid from dates set in the past will be imediately canceled.
+    // These will instead be treated as errors
+    CREATE_TRADE_STATUS_TIMESTAMPS_NOT_VALID = 5;
+  }
+
+  CreateTradeStatus status = 1;
+  TradeId trade_id = 2;
+  TradeRequest trade_request = 3;
+}
+
+message GetTradeRequest {
+  TradeId trade_id = 1;
+}
+
+message GetTradeResponse {
+  enum GetTradeStatus {
+    GET_TRADE_STATUS_UNSPECIFIED = 0;
+
+    // trade was found
+    GET_TRADE_STATUS_OK = 1;
+
+    // no trade was found
+    GET_TRADE_STATUS_NOT_FOUND = 2;
+  }
+  GetTradeStatus status = 1;
+  TradeId trade_id = 2;
+  optional TradeRequest trade_request = 3;
+}
+
+message DeleteTradeRequest {
+  TradeId trade_id = 1;
+}
+
+message DeleteTradeResponse {
+  enum DeleteTradeStatus {
+    DELETE_TRADE_STATUS_UNSPECIFIED = 0;
+
+    // Trade was successfully deleted
+    DELETE_TRADE_STATUS_OK = 1;
+
+    // Trade was not found for this user
+    DELETE_TRADE_STATUS_NOT_FOUND = 2;
+
+    // Something went wrong with the server deleting this trade
+    DELETE_TRADE_STATUS_INTERNAL_ERROR = 3;
+  }
+
+  DeleteTradeStatus status = 1;
+  TradeId trade_id = 2;
+}
