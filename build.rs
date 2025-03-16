@@ -6,9 +6,17 @@ fn main() -> Result<()> {
 
     tonic_build::configure()
         .file_descriptor_set_path(out_dir.join("moss-street.bin"))
-        .compile_protos(&["protos/common.proto", "protos/users.proto"], &["protos"])?;
+        .compile_protos(
+            &[
+                "protos/common.proto",
+                "protos/users.proto",
+                "protos/trading.proto",
+            ],
+            &["protos"],
+        )?;
 
     tonic_build::compile_protos("protos/common.proto")?;
     tonic_build::compile_protos("protos/users.proto")?;
+    tonic_build::compile_protos("protos/trading.proto")?;
     Ok(())
 }
