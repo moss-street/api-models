@@ -1,0 +1,38 @@
+name: Build & Release Python gRPC Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 🛎 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install dependencies
+        run: pip install grpcio grpcio-tools setuptools wheel
+
+      - name: 🔨 Run Build Script
+        run: |
+          sudo chmod +x ./build_package.sh
+          ./build_package.sh
+
+      - name: 📤 Create GitHub Release & Upload Package
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+          tag_name: v0.1.2
+          name: "Api Models v0.1.2"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
