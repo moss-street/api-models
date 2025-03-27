@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-
 
 jobs:
   build-and-release:
@@ -36,7 +32,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*
-          tag_name: v0.1.1
-          name: "Api Models v0.1.1"
+          tag_name: v0.1.2
+          name: "Api Models v0.1.2"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
