@@ -2,17 +2,26 @@
 
 set -e  # Exit on error
 
+PROTO_DIR="protos"
+OUT_DIR="api_models"
+
 echo "📂 Creating package directory..."
-mkdir -p api_models
+mkdir -p ${OUT_DIR}
+
+echo "🔍 Finding all proto files..."
+PROTO_FILES=$(find ${PROTO_DIR} -name "*.proto")
 
 echo "🔨 Generating Python Protobuf files..."
-python -m grpc_tools.protoc -Iprotos --python_out=api_models --grpc_python_out=api_models protos/*.proto
+python -m grpc_tools.protoc \
+    --proto_path=${PROTO_DIR} \
+    --python_out=${OUT_DIR} \
+    --grpc_python_out=${OUT_DIR} \
+    ${PROTO_FILES}
 
-echo "📦 Creating __init__.py for package..."
-echo 'from .common_pb2 import *' > api_models/__init__.py
-echo 'from .common_pb2_grpc import *' >> api_models/__init__.py
-echo 'from .users_pb2 import *' >> api_models/__init__.py
-echo 'from .users_pb2_grpc import *' >> api_models/__init__.py
+echo "📦 Ensuring package structure..."
+for dir in $(find ${OUT_DIR} -type d); do
+    touch "${dir}/__init__.py"
+done
 
 echo "📦 Building Python package..."
 python setup.py sdist bdist_wheel

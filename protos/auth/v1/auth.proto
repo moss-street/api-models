@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service AuthorizationService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+}
+
+message Token {
+  google.protobuf.Timestamp create_ts = 1;
+  google.protobuf.Timestamp expire_ts = 2;
+  string token = 3;
+}
+
+message User {
+  int32 uuid = 1;
+  string username = 2;
+  Token token = 3;
+  google.protobuf.Timestamp creation_date = 4;
+}
+
+message CreateUserRequest {
+  string email = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+}
+
+message CreateUserResponse {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_ERROR = 1;
+    STATUS_OK = 2;
+  } // account was created or not
+  Status status = 1;
+  string message = 2; // message containing info about account creation
+}
+
+message LoginUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_BAD_LOGIN_INFO = 1;
+    STATUS_OK = 2;
+  } // account was created or not
+  Status status = 1;
+  User user = 2;
+}
