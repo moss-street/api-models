@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="api_models",
-    version="0.1.3",
+    version="0.1.4",
     packages=find_packages(where="."),  # Only include generated files
     package_dir={"": "."},
     install_requires=[

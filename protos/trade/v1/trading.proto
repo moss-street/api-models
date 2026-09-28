@@ -8,6 +8,8 @@ service TradeService {
   rpc CreateTrade(CreateTradeRequest) returns (CreateTradeResponse);
   rpc GetTrade(GetTradeRequest) returns (GetTradeResponse);
   rpc DeleteTrade(DeleteTradeRequest) returns (DeleteTradeResponse);
+
+  rpc GetWalletBalance(GetWalletBalanceRequest) returns (GetWalletBalanceResponse);
 }
 
 message TradeId {
@@ -137,4 +139,29 @@ message DeleteTradeResponse {
 
   DeleteTradeStatus status = 1;
   TradeId trade_id = 2;
+}
+
+message GetWalletBalanceRequest {
+  string symbol = 1;
+}
+
+message GetWalletBalanceResponse {
+  enum GetWalletBalanceStatus {
+    GET_WALLET_BALANCE_STATUS_UNSPECIFIED = 0;
+
+    // Get wallet balance respnse was ok
+    GET_WALLET_BALANCE_STATUS_OK = 1;
+
+    // Could not find wallet for user or the user does not exist
+    GET_WALLET_BALANCE_STATUS_NOT_FOUND = 2;
+  }
+
+  // Status of the response
+  GetWalletBalanceStatus status = 1;
+
+  // Original request that was sent
+  GetWalletBalanceRequest request = 2;
+
+  // Amount that is left in the wallet
+  double balance = 3;
 }
