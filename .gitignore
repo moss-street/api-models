@@ -1,4 +1,7 @@
 Cargo.lock
 target/
+__pycache__/
+*.pyc
+*.egg-info/
 build
 dist
