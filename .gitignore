@@ -1,5 +1,4 @@
 Cargo.lock
 target/
-/api_models*
 build
 dist

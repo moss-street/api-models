@@ -10,6 +10,7 @@ service TradeService {
   rpc DeleteTrade(DeleteTradeRequest) returns (DeleteTradeResponse);
 
   rpc GetWalletBalance(GetWalletBalanceRequest) returns (GetWalletBalanceResponse);
+  rpc AddFunds(AddFundsRequest) returns (AddFundsResponse);
 }
 
 message TradeId {
@@ -163,5 +164,26 @@ message GetWalletBalanceResponse {
   GetWalletBalanceRequest request = 2;
 
   // Amount that is left in the wallet
+  double balance = 3;
+}
+
+message AddFundsRequest {
+  // Asset to credit to the authenticated user's account.
+  string symbol = 1;
+
+  // Positive, finite quantity to credit.
+  double amount = 2;
+}
+
+message AddFundsResponse {
+  enum AddFundsStatus {
+    ADD_FUNDS_STATUS_UNSPECIFIED = 0;
+    ADD_FUNDS_STATUS_OK = 1;
+    ADD_FUNDS_STATUS_INVALID_AMOUNT = 2;
+    ADD_FUNDS_STATUS_INTERNAL_ERROR = 3;
+  }
+
+  AddFundsStatus status = 1;
+  AddFundsRequest request = 2;
   double balance = 3;
 }
